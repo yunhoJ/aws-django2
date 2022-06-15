@@ -27,11 +27,14 @@ def shop(request):
         return JsonResponse(serializer.errors,status=400)
 
 @csrf_exempt 
-def menu(request):
+def menu(request,shop):
     if request.method =='GET':
-        menu=Menu.objects.all()
-        serializer=MenuSerializer(menu,many=True)# many=True 는 mune데이터가 여러개라도 상관안함 없으면 상관함 
-        return JsonResponse(serializer.data,safe=False) 
+        #Menu.objects.get은 하나만 불러올수 있음 
+        menu=Menu.objects.filter(shop=shop)
+        # serializer=MenuSerializer(menu,many=True)
+        # return JsonResponse(serializer.data,safe=False) 
+        shop_title=Shop.objects.get(id=shop)
+        return render (request, 'order/menu_list.html', {'menu_list':menu,"shop_title":shop_title})
     
     elif request.method =='POST':
         data=JSONParser().parse(request)
