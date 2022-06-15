@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+<!-- 모든 shop리스트를 한번씩 돌면서 name과 address를 출력 -->
+{% for shop in shop_list %}
+
+<h5 href="/menus"> {{shop.shop_name}}</h5>
+<h5> {{shop.shop_address}}</h5>
+
+{% endfor %}
+</body>
+</html>
