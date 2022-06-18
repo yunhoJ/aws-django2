@@ -24,4 +24,5 @@ urlpatterns = [
     path('order/', include('order.urls')), 
     # boss/ 가 들어 오면 boss 안에있는 urls로 간다 
     path('boss/',include('boss.urls')),
+    path('delivery/',include('delivery.urls')),
 ]
