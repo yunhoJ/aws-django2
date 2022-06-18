@@ -1,4 +1,5 @@
 from django.shortcuts import render
+
 from order.models import Shop, Menu,Orders, Order_foodlist
 from order.serializers import ShopSerializer,MenuSerializer
 from django.http import JsonResponse,HttpResponse
@@ -34,7 +35,7 @@ def menu(request,shop):
         # serializer=MenuSerializer(menu,many=True)
         # return JsonResponse(serializer.data,safe=False) 
         shop_title=Shop.objects.get(id=shop)
-        return render (request, 'order/menu_list.html', {'menu_list':menu,"shop_title":shop_title})
+        return render (request, 'order/menu_list.html', {'menu_list':menu,"shop_title":shop_title,})
     
     elif request.method =='POST':
         data=JSONParser().parse(request)
@@ -44,3 +45,23 @@ def menu(request,shop):
             serializer.save()
             return JsonResponse(serializer.data,status=201)
         return JsonResponse(serializer.errors,status=400)
+
+from django.utils import timezone
+@csrf_exempt 
+def order(request):
+    if request.method=="POST":
+        address=request.POST['address']
+        shop=request.POST['shop']
+        order_date= timezone.now()
+        food_list=request.POST.getlist('menu')
+
+        shop_item=Shop.objects.get(pk=int(shop))
+        shop_item.orders_set.create(address=address,order_date=order_date,shop=int(shop))
+        
+        order_item=Orders.objects.get(pk=shop_item.orders_set.latest('id').id)# 오더 테이블 상 마지막 id
+        for food in food_list:
+           order_item.order_foodlist_set.create(food_name=food)   
+        return render (request, 'order/success.html')
+    elif request.method=='GET':
+        order_list=Orders.objects.all()
+        return render (request, 'order/order_list.html', {'order_list':order_list})

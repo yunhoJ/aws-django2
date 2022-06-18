@@ -10,11 +10,24 @@
     
 <!-- 모든 shop리스트를 한번씩 돌면서 name과 address를 출력 -->
 <h1>{{shop_title.shop_name}}</h1>
-{% for menu in menu_list %}
-
-<h5> {{menu.food_name}}</h5>
-<!-- <h5> {{shop.shop_address}}</h5> -->
-
-{% endfor %}
+<form action="{% url 'order' %}" method="post">
+    <ol>
+        <h4>1. 주문하실 음식을 골라주세요.</h4>
+        {% for menu in menu_list %}
+        <input type="checkbox" id="menu{{forloop.counter}} "name="menu"value={{menu.food_name}}>
+        <label for="menu{{forloop.counter}}">{{menu.food_name}}</label>
+        <br>        
+        {% endfor %}
+    </ol>
+    <ol>
+        <h4>2. 집주소를 입력해 주세요</h4>
+        <!-- 백엔드에서 받은 address키값을 request.POST[address]로 불러와 사용 -->
+        <!-- required 는 필수 항목이라는 뜻  -->
+        <input type="text" name="address"required>
+        <!-- 실제 유저한테 안보임  -->
+        <input type="hidden" name="shop" value={{shop_title.id}} required>
+    </ol>
+    <input type="submit" value="주문 완료">
+</form>
 </body>
 </html>
