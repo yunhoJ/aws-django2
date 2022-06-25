@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from user.models import User
 from order.models import Shop, Menu,Orders, Order_foodlist
 from order.serializers import ShopSerializer,MenuSerializer
 from django.http import JsonResponse,HttpResponse
@@ -16,9 +16,16 @@ def shop(request):
         # serializer= ShopSerializer(shop,many=True)
         # return JsonResponse(serializer.data,safe=False) 
 
-        shop=Shop.objects.all()
-        return render (request, 'order/shop_list.html', {'shop_list':shop})
-        
+        # user에 따른 정보 보여주기 
+        try:
+            if User.objects.get(id=request.session["user_id"]).user_type==0:
+
+                shop=Shop.objects.all()
+                return render (request, 'order/shop_list.html', {'shop_list':shop})
+            else:
+                return render (request,"order/fail.html")
+        except:
+                return render (request,"order/fail.html")    
     elif request.method =='POST':
         data=JSONParser().parse(request)
         serializer=ShopSerializer(data=data)
